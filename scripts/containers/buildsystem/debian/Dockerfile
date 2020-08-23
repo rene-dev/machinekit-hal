@@ -193,3 +193,20 @@ RUN if ! [[ $(echo -e "$($(dpkg-architecture -a${HOST_ARCHITECTURE}     \
                "export DPKG_CFLAGS=\"${DPKG_CFLAGS} -Werror\"\n"        \
                > /opt/environment/dpkg_flags.sh;                        \
     fi
+
+
+# FIXME
+RUN set -x && \
+    apt-get install -y wget && \
+    cd /tmp && \
+    wget http://deb.debian.org/debian/pool/main/y/yapps2/yapps2_2.2.1.orig.tar.gz \
+        http://deb.debian.org/debian/pool/main/y/yapps2/yapps2_2.2.1-3.1.diff.gz && \
+    mkdir yapps && cd yapps && \
+    tar xzf ../yapps2_2.2.1.orig.tar.gz --strip-components=1 && \
+    gzip -cd ../yapps2_2.2.1-3.1.diff.gz | patch -p 1 && \
+    mk-build-deps -ir  -t \
+        "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" \
+	debian/control && \
+    dpkg-buildpackage -uc -us && \
+    cd /tmp && \
+    apt-get install -y ./python3-yapps_2.2.1-3.1_all.deb ./yapps2_2.2.1-3.1_all.deb
