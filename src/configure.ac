@@ -31,6 +31,19 @@ if test "$srcdir" != "."; then
     AC_MSG_ERROR([Building outside of srcdir is not supported])
 fi
 
+AC_ARG_WITH(python,
+    [  --with-python=<path>                    Specify the Python interpreter],
+    [
+        PYTHON=$withval
+    ],[
+        PYTHON=python3
+    ])
+AC_PATH_PROG(PYTHON,$PYTHON,"none")
+if test $PYTHON = "none"
+then
+    AC_MSG_ERROR([python not found])
+fi
+
 # Cython Python Bindings generator
 # 0.19.1 is the version currently in wheezy-backports
 AC_PROG_CYTHON(0.19.0)
@@ -1463,19 +1476,6 @@ AC_PATH_PROG(MANDB, mandb, "")
 # Check for programs we need to build and install docs.                      #
 # (Optional, if not present, just don't build the docs.)                     #
 ##############################################################################
-
-AC_ARG_WITH(python,
-    [  --with-python=<path>                    Specify the Python interpreter],
-    [
-        PYTHON=$withval
-    ],[
-        PYTHON=python3
-    ])
-AC_PATH_PROG(PYTHON,$PYTHON,"none")
-if test $PYTHON = "none"
-then
-    AC_MSG_ERROR([python not found])
-fi
 
 AC_MSG_CHECKING(whether pydot capability required)
 AC_ARG_ENABLE(pydot,
